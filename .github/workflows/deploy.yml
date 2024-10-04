@@ -47,7 +47,7 @@ jobs:
         id: generate_solution_prefix
         run: |
           set -e
-          COMMON_PART="pslck"
+          COMMON_PART="pslk"
           TIMESTAMP=$(date +%s)  
           UPDATED_TIMESTAMP=$(echo $TIMESTAMP | tail -c 3) 
           UNIQUE_SOLUTION_PREFIX="${COMMON_PART}${UPDATED_TIMESTAMP}"
