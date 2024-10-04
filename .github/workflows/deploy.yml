@@ -18,7 +18,7 @@ jobs:
       - name: Login to Azure
         run: |
           az login --service-principal -u ${{ secrets.AUTO_AZURE_CLIENT_ID }} -p ${{ secrets.AUTO_AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AUTO_AZURE_TENANT_ID }}
-          az account set --subscription ${{ secrets.AUTO_AZURE_SUBSCRIPTION_ID }}
+        #   az account set --subscription ${{ secrets.AUTO_AZURE_SUBSCRIPTION_ID }}
       
       - name: Install Bicep CLI
         run: az bicep install
@@ -55,29 +55,29 @@ jobs:
           echo "SOLUTION_PREFIX=${UNIQUE_SOLUTION_PREFIX}" >> $GITHUB_ENV
           echo "Generated SOLUTION_PREFIX: ${UNIQUE_SOLUTION_PREFIX}" 
 
-      - name: Deploy Bicep Template
-        id: deploy
-        run: |
-          set -e
-          az deployment group create \
-            --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-            --template-file Deployment/bicep/main.bicep \
-            --parameters solutionPrefix=${{ env.SOLUTION_PREFIX }} location=eastus
+    #   - name: Deploy Bicep Template
+    #     id: deploy
+    #     run: |
+    #       set -e
+    #       az deployment group create \
+    #         --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+    #         --template-file Deployment/bicep/main.bicep \
+    #         --parameters solutionPrefix=${{ env.SOLUTION_PREFIX }} location=eastus
 
-      - name: Send Notification on Failure
-        if: failure()
-        run: |
-          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+    #   - name: Send Notification on Failure
+    #     if: failure()
+    #     run: |
+    #       RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
       
-          # Construct the email body
-          EMAIL_BODY=$(cat <<EOF
-          {
-            "body": "<p>Dear Team,</p><p>We would like to inform you that the CKMv2 Automation process has encountered an issue and has failed to complete successfully.</p><p><strong>Build URL:</strong> ${RUN_URL}<br> ${OUTPUT}</p><p>Please investigate the matter at your earliest convenience.</p><p>Best regards,<br>Your Automation Team</p>"
-          }
-          EOF
-          )
+    #       # Construct the email body
+    #       EMAIL_BODY=$(cat <<EOF
+    #       {
+    #         "body": "<p>Dear Team,</p><p>We would like to inform you that the CKMv2 Automation process has encountered an issue and has failed to complete successfully.</p><p><strong>Build URL:</strong> ${RUN_URL}<br> ${OUTPUT}</p><p>Please investigate the matter at your earliest convenience.</p><p>Best regards,<br>Your Automation Team</p>"
+    #       }
+    #       EOF
+    #       )
       
-          # Send the notification
-          curl -X POST "${{ secrets.LOGIC_APP_URL }}" \
-            -H "Content-Type: application/json" \
-            -d "$EMAIL_BODY" || echo "Failed to send notification"
+    #       # Send the notification
+    #       curl -X POST "${{ secrets.LOGIC_APP_URL }}" \
+    #         -H "Content-Type: application/json" \
+    #         -d "$EMAIL_BODY" || echo "Failed to send notification"
